@@ -1,0 +1,42 @@
+{
+  "repository": "#",
+  "license": "UNLICENSED",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && vite build",
+    "dev": "SET NODE_OPTIONS=--openssl-legacy-provider && vite",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit --pretty",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.ts\"",
+    "format": "prettier -w  .",
+    "prettier:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@seregpie/three.text-sprite": "^3.2.0",
+    "@seregpie/three.text-texture": "^3.2.1",
+    "lil-gui": "^0.17.0",
+    "paho-mqtt": "^1.1.0",
+    "stats.js": "^0.17.0",
+    "three": "^0.143"
+  },
+  "devDependencies": {
+    "@types/paho-mqtt": "^1.0.6",
+    "@types/stats.js": "^0.17.0",
+    "@types/three": "^0.143.0",
+    "@typescript-eslint/eslint-plugin": "^5.32.0",
+    "@typescript-eslint/parser": "^5.32.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.4",
+    "vitest": "^0.20.3"
+  }
+}

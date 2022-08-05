@@ -1,0 +1,16 @@
+.cache
+.changeset
+.git
+.husky
+.netlify
+.vscode
+node_modules
+
+build
+dist
+dist-ssr
+
+coverage
+
+package.json
+pnpm-lock.yaml
