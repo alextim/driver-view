@@ -13,7 +13,7 @@ export default class MockDataApi implements IDataApi {
   }
 
   async getWarehouseAsync() {
-    return Promise.resolve(warehouseJSON as unknown as Warehouse);
+    return Promise.resolve(warehouseJSON as unknown as Warehouse[]);
   }
 
   async getPalettesCountAsync() {
