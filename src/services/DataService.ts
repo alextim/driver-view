@@ -1,5 +1,5 @@
 import EventEmitter from '../utils/EventEmitter';
-import { IDataService, IDataApi, WarehauseAllStatus, WarehouseForklift, Warehouse, WarehouseSize, WarehousePalettes } from '../types';
+import { IDataService, IDataApi, WarehouseAllStatus, WarehouseForklift, Block, WarehouseSize, WarehousePalettes } from '../types';
 
 export default class DataService extends EventEmitter {
   dataApi: IDataApi;
@@ -21,7 +21,7 @@ export default class DataService extends EventEmitter {
 
   getWarehouse() {
     // check local storage 1st
-    this.dataApi.getWarehouseAsync().then((data: Warehouse[]) => this.trigger('warehouseDataReady', [data]));
+    this.dataApi.getWarehouseAsync().then((data: Block[]) => this.trigger('warehouseDataReady', [data]));
   }
 
   getPalettes(start: number, length: number) {
@@ -29,7 +29,7 @@ export default class DataService extends EventEmitter {
   }
 
   getColorsSettings() {
-    this.dataApi.getColorsSettingsAsync().then((data: Warehouse) => this.trigger('colorSettingsDataReady', [data]));
+    this.dataApi.getColorsSettingsAsync().then((data: Block) => this.trigger('colorSettingsDataReady', [data]));
   }
 
   getForkliftListOnline() {
@@ -37,6 +37,6 @@ export default class DataService extends EventEmitter {
   }
 
   getAllStatus() {
-    this.dataApi.getAllStatusAsync().then((data: WarehauseAllStatus) => this.trigger('allStatusDataReady', [data]));
+    this.dataApi.getAllStatusAsync().then((data: WarehouseAllStatus) => this.trigger('allStatusDataReady', [data]));
   }
 }

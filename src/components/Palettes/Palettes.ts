@@ -10,8 +10,8 @@ import type { WarehousePalette } from '../../types';
 export default class Palettes {
   container: THREE.Object3D;
   clientsColors: Record<string, string> = {};
-  palettesGeometries: Record<string, THREE.BoxGeometry> = {};
-  palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>> = {};
+  private palettesGeometries: Record<string, THREE.BoxGeometry> = {};
+  private palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>> = {};
 
   constructor() {
     this.container = new THREE.Object3D();

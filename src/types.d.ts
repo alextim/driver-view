@@ -14,7 +14,7 @@ export interface IDataApi {
   getPalettesAsync: (start: number, length: number) => Promise<WarehousePalettes>;
   getColorsSettingsAsync: () => Promise<Warehouse>;
   getForkliftListOnlineAsync: () => Promise<WarehouseForklift>;
-  getAllStatusAsync: () => Promise<WarehauseAllStatus>;
+  getAllStatusAsync: () => Promise<WarehouseAllStatus>;
   getPalettesByEpcNrAsync: (palettesId: any[]) => Promise<WarehousePalette[]>;
 }
 
@@ -31,14 +31,13 @@ export type WorldSettings = {
   sceneColor: number;
 };
 
-export type WarehouseTransponder = {
-  posIdentNr: string;
-  xkoord: number;
-  ykoord: number;
-  lfdnrReihe: string;
+export type Block = {
+  kuLagerNr: string;
+  kuBlockNr: string;
+  rows: BlockRow[];
 };
 
-export type WarehouseRow = {
+export type BlockRow = {
   lfdnrReihe: string;
   xMitte: number;
   yMitte: number;
@@ -54,13 +53,14 @@ export type WarehouseRow = {
   maxHoehe: number;
   blockTyp: number;
   blockArt: number;
-  transponders: WarehouseTransponder[];
+  transponders: Transponder[];
 };
 
-export type Warehouse = {
-  kuLagerNr: string;
-  kuBlockNr: string;
-  rows: WarehouseRow[];
+export type Transponder = {
+  posIdentNr: string;
+  xkoord: number;
+  ykoord: number;
+  lfdnrReihe: string;
 };
 
 export type WarehouseSize = {
@@ -124,111 +124,107 @@ export type WarehouseForklift = {
   username: string | null;
 };
 
-export type WarehauseAllStatus = {
+export type WarehouseAllStatus = {
   zones: never[];
   forklifts: {
-    forklift: {
-      staplerNr: string;
-      bereit: string;
-      xkoord: number;
-      ykoord: number;
-      winkel: number;
-    };
-    palettes: {
-      gabelNr: number;
-      transportEtage: number;
-      ykoord: number;
-      winkel: number;
-    };
-    palettes: {
-      gabelNr: number;
-      transportEtage: number;
-      gabelSlot: number;
-
-      leAufnahmeSeite: number;
-      leGegenSeite: number;
-      leHoehe: number;
-      leBasx: number;
-      leBasy: number;
-      leBasz: number;
-      luOwner: string;
-      artikel: string;
-      articleDesc: string;
-      menge: number;
-      meeinheit: string;
-      leNr: string;
-      epcNr: string;
-      prodDatumZeit: string;
-      mhdDatumZeit: string;
-      sperrDatumZeit: string;
-      gewicht: number;
-      loadingType: string;
-      dimension: string;
-      transNo: string;
-      orderNo: string;
-      mission: number;
-      scanEpc: number;
-      scanAntw: number;
-      scanErr: number;
-      errDesc: string;
-      eigenAuftragErstellt: string;
-      eauftragNr: string;
-      sonderPlatz: number;
-      aufKennung: number;
-      hazmatP1: string;
-      hazmatP2: string;
-      luRemainder: string;
-      luStockable: string;
-      leDefekt: number;
-      leUnkonform: number;
-      leGesperrt: number;
-      leQs: number;
-      leAdditional1: number;
-      leAdditional2: number;
-      mess: string;
-      resNr: number;
-      prodBlock: string;
-      additionalChar1: string;
-      additionalChar2: string;
-      additionalChar3: string;
-      additionalChar4: string;
-      additionalChar5: string;
-      additionalChar6: string;
-      additionalChar7: string;
-      additionalChar8: string;
-      additionalChar9: string;
-      additionalInt1: number;
-      additionalInt2: number;
-      additionalInt3: number;
-      additionalInt4: number;
-      additionalInt5: number;
-      additionalInt6: number;
-      additionalInt7: number;
-      additionalInt8: number;
-      additionalInt9: number;
-      additionalFloat1: number;
-      additionalFloat2: number;
-      additionalFloat3: number;
-      additionalFloat4: number;
-      additionalFloat5: number;
-      additionalFloat6: number;
-      additionalFloat7: number;
-      additionalFloat8: number;
-      additionalFloat9: number;
-      additionalDate1: string;
-      additionalDate2: string;
-      aktion1: number;
-      aktion2: number;
-      aktion3: number;
-      palType: number;
-      aufLagerNr: string;
-      aufBlockNr: string;
-      aufReihe: string;
-
-      aufDate: string;
-    }[];
+    forklift: ForkliftStatus;
+    palettes: PaletteStatus[];
   }[];
   palettes: never[];
+};
+
+export type ForkliftStatus = {
+  staplerNr: string;
+  bereit: string;
+  xkoord: number;
+  ykoord: number;
+  winkel: number;
+};
+
+export type PaletteStatus = {
+  gabelNr: number;
+  transportEtage: number;
+  gabelSlot: number;
+  leAufnahmeSeite: number;
+  leGegenSeite: number;
+  leHoehe: number;
+  leBasx: number;
+  leBasy: number;
+  leBasz: number;
+  luOwner: string;
+  artikel: string;
+  articleDesc: string;
+  menge: number;
+  meeinheit: string;
+  leNr: string;
+  epcNr: string;
+  prodDatumZeit: string;
+  mhdDatumZeit: string;
+  sperrDatumZeit: string;
+  gewicht: number;
+  loadingType: string;
+  dimension: string;
+  transNo: string;
+  orderNo: string;
+  mission: number;
+  scanEpc: number;
+  scanAntw: number;
+  scanErr: number;
+  errDesc: string;
+  eigenAuftragErstellt: string;
+  eauftragNr: string;
+  sonderPlatz: number;
+  aufKennung: number;
+  hazmatP1: string;
+  hazmatP2: string;
+  luRemainder: string;
+  luStockable: string;
+  leDefekt: number;
+  leUnkonform: number;
+  leGesperrt: number;
+  leQs: number;
+  leAdditional1: number;
+  leAdditional2: number;
+  mess: string;
+  resNr: number;
+  prodBlock: string;
+  additionalChar1: string;
+  additionalChar2: string;
+  additionalChar3: string;
+  additionalChar4: string;
+  additionalChar5: string;
+  additionalChar6: string;
+  additionalChar7: string;
+  additionalChar8: string;
+  additionalChar9: string;
+  additionalInt1: number;
+  additionalInt2: number;
+  additionalInt3: number;
+  additionalInt4: number;
+  additionalInt5: number;
+  additionalInt6: number;
+  additionalInt7: number;
+  additionalInt8: number;
+  additionalInt9: number;
+  additionalFloat1: number;
+  additionalFloat2: number;
+  additionalFloat3: number;
+  additionalFloat4: number;
+  additionalFloat5: number;
+  additionalFloat6: number;
+  additionalFloat7: number;
+  additionalFloat8: number;
+  additionalFloat9: number;
+  additionalDate1: string;
+  additionalDate2: string;
+  aktion1: number;
+  aktion2: number;
+  aktion3: number;
+  palType: number;
+  aufLagerNr: string;
+  aufBlockNr: string;
+  aufReihe: string;
+  aufDate: string;
 };
 
 declare global {

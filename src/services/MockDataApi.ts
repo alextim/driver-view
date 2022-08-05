@@ -1,4 +1,4 @@
-import { IDataApi, Warehouse, WarehouseSize, WarehousePalettes, WarehouseForklift, WarehauseAllStatus, WarehousePalette } from '../types';
+import { IDataApi, Block, WarehouseSize, WarehousePalettes, WarehouseForklift, WarehouseAllStatus, WarehousePalette } from '../types';
 
 import warehouseJSON from '../assets/mock/warehouseJSON-3.json';
 import searchPalettesJSON from '../assets/mock/searchPalettesJSON-3.json';
@@ -9,11 +9,11 @@ export default class MockDataApi implements IDataApi {
   async getWarehouseSizeAsync() {
     // return Promise.resolve([{x: 680, y: 330}]) // 1
     // return Promise.resolve([{ x: 192.5, y: 183 }]) // 2 thai
-    return Promise.resolve([{ x: 42.6, y: 37.2 } as WarehouseSize]); // 3 gps
+    return Promise.resolve([{ x: 42.6, y: 37.2 }]); // 3 gps
   }
 
   async getWarehouseAsync() {
-    return Promise.resolve(warehouseJSON as unknown as Warehouse[]);
+    return Promise.resolve(warehouseJSON as unknown as Block[]);
   }
 
   async getPalettesCountAsync() {
@@ -28,7 +28,7 @@ export default class MockDataApi implements IDataApi {
   }
 
   async getColorsSettingsAsync() {
-    return Promise.resolve(warehouseJSON as unknown as Warehouse);
+    return Promise.resolve(warehouseJSON as unknown as Block);
   }
 
   async getForkliftListOnlineAsync() {
@@ -36,7 +36,7 @@ export default class MockDataApi implements IDataApi {
   }
 
   async getAllStatusAsync() {
-    return Promise.resolve(allStatusJSON as unknown as WarehauseAllStatus);
+    return Promise.resolve(allStatusJSON as unknown as WarehouseAllStatus);
   }
 
   async getPalettesByEpcNrAsync(palettesId: any[]) {

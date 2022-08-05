@@ -6,26 +6,26 @@ import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUt
 // import TextSprite from '@seregpie/three.text-sprite'
 import blockMaterials from './blockMaterial';
 
-import type { Warehouse, WarehouseRow } from '../../types';
+import type { Block, BlockRow } from '../../types';
 
 type TextMesh = THREE.Mesh<TextGeometry, THREE.LineBasicMaterial | THREE.MeshBasicMaterial>;
 
 export default class Blocks {
-  mergeGeometries = false;
-  drawLabel: boolean;
+  private mergeGeometries = false;
+  private drawLabel: boolean;
 
-  geomitries: Record<string, any> = {};
+  private geomitries: Record<string, any> = {};
 
-  font: Font;
-  data: Warehouse[];
+  private font: Font;
+  private data: Block[];
 
-  labels_7: TextMesh[] = [];
-  labels: TextMesh[] = [];
-  rowLabels: TextMesh[] = [];
+  private labels_7: TextMesh[] = [];
+  private labels: TextMesh[] = [];
+  private rowLabels: TextMesh[] = [];
 
   container: THREE.Object3D;
 
-  constructor({ font, data, drawLabel }: { font: Font; data: Warehouse[]; drawLabel: boolean }) {
+  constructor({ font, data, drawLabel }: { font: Font; data: Block[]; drawLabel: boolean }) {
     this.drawLabel = drawLabel;
 
     this.font = font;
@@ -113,7 +113,7 @@ export default class Blocks {
     return new THREE.Mesh(mergedGeometry, material);
   }
 
-  createBlock(block: Warehouse) {
+  createBlock(block: Block) {
     // console.log(block)
     try {
       const blockTyp = block.rows[0].blockTyp;
@@ -140,14 +140,14 @@ export default class Blocks {
     }
   }
 
-  createRow(row: WarehouseRow, kuBlockNr: string, hasLabel: boolean) {
+  createRow(row: BlockRow, kuBlockNr: string, hasLabel: boolean) {
     // const mesh = this.createRowBorder(row, kuBlockNr)
-    const mesh = this.createRowBorder(row, kuBlockNr);
+    const mesh = this.createRowBorder(row /*, kuBlockNr */);
     this.container.add(mesh);
 
     if (this.drawLabel) {
       if (hasLabel) {
-        const label = this.createRowLabel(row, kuBlockNr);
+        const label = this.createRowLabel(row /*, kuBlockNr */);
         if (this.mergeGeometries) this.rowLabels.push(label);
         else this.container.add(label);
 
@@ -206,24 +206,20 @@ export default class Blocks {
     }
   */
 
-  createRowBorder(row: WarehouseRow, kuBlockNr: string) {
-    const width = row.reiheLaenge,
-      height = row.reiheBreite,
-      depth = row.reiheBreite; // Z
-    const dx = width / 2,
-      dy = height / 2;
-    const x = row.xMitte,
-      y = row.yMitte;
-    const dangle = row.winkel * (Math.PI / 180); // calculate angle in radiants
+  createRowBorder(row: BlockRow /*, kuBlockNr: string */) {
+    const { reiheLaenge: width, reiheBreite: height, reiheBreite: depth, xMitte: x, yMitte: y, blockTyp, winkel, lfdnrReihe } = row; // Z
+    // const dx = width / 2;
+    // const dy = height / 2;
+    const dangle = winkel * (Math.PI / 180); // calculate angle in radiants
 
-    const material = this.getMaterial(row.blockTyp);
+    const material = this.getMaterial(blockTyp);
     const geometry = this.getRowBorderGeometry(width, height);
 
     const polygon = new THREE.Line(geometry, material);
     polygon.position.set(x, y, 0);
     polygon.rotateZ(dangle);
 
-    polygon.name = 'blck-row-3d-' + row.lfdnrReihe;
+    polygon.name = 'blck-row-3d-' + lfdnrReihe;
     // polygon.userData = row;
     // polygon.userData["kuBlockNr"] = kuBlockNr;
 
@@ -323,7 +319,7 @@ export default class Blocks {
     }
   }
 
-  createBlockLabel(block: Warehouse) {
+  createBlockLabel(block: Block) {
     const x = block.rows[0].xStart,
       y = block.rows[0].yStart;
     const shift = 1;
@@ -335,7 +331,7 @@ export default class Blocks {
     return label;
   }
 
-  createBlockLabel_7(block: Warehouse) {
+  createBlockLabel_7(block: Block) {
     const x = block.rows[0].xStart,
       y = block.rows[0].yStart;
     const shift = 1;
@@ -345,7 +341,7 @@ export default class Blocks {
     return label;
   }
 
-  createRowLabel(row: WarehouseRow, kuBlockNr: string) {
+  createRowLabel(row: BlockRow /*, kuBlockNr: string */) {
     const x = row.xStart;
     const y = row.yStart;
     const shift = 1;

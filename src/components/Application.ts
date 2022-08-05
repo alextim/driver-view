@@ -1,15 +1,15 @@
-import { IDataApi, WorldSettings, Warehouse } from '../types';
+import { IDataApi, WorldSettings, Block, WarehouseAllStatus } from '../types';
 
 import * as THREE from 'three';
 import * as dat from 'lil-gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
+// import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
 
 import DataService from '../services/DataService';
 import MqttClient from '../services/MqttClient';
 
 import { MY_FORKLIFT_ID, TCPCOM_URL } from '../constants';
-import getData from '../getData';
+// import getData from '../getData';
 
 import Resources from '../utils/Resources';
 import World from './World';
@@ -17,30 +17,30 @@ import Palettes from './Palettes';
 import Forklifts from './Forklifts';
 
 export default class Application {
-  targetElement: HTMLElement | null;
-  sizes: {
+  private targetElement: HTMLElement | null;
+  private sizes: {
     width: number;
     height: number;
   };
-  scene: THREE.Scene;
-  myForklift: THREE.Object3D;
-  dataService: DataService;
-  resources: Resources;
-  palettes: Palettes;
-  mqttClient: MqttClient;
-  forklifts!: Forklifts;
-  worldSettings!: WorldSettings;
+  private scene: THREE.Scene;
+  private myForklift: THREE.Object3D;
+  private dataService: DataService;
+  private resources: Resources;
+  private palettes: Palettes;
+  private mqttClient: MqttClient;
+  private forklifts!: Forklifts;
+  private worldSettings!: WorldSettings;
 
-  topCamera!: THREE.PerspectiveCamera;
-  frontCamera!: THREE.PerspectiveCamera;
-  camera!: THREE.PerspectiveCamera;
+  private topCamera!: THREE.PerspectiveCamera;
+  private frontCamera!: THREE.PerspectiveCamera;
+  private camera!: THREE.PerspectiveCamera;
 
-  controls!: OrbitControls;
+  private controls!: OrbitControls;
 
-  renderer!: THREE.WebGLRenderer;
+  private renderer!: THREE.WebGLRenderer;
 
-  world!: World;
-  debug!: dat.GUI;
+  private world!: World;
+  private debug!: dat.GUI;
 
   constructor({ targetElement, dataApi }: { targetElement: HTMLElement | null; dataApi: IDataApi }) {
     if (!targetElement) {
@@ -112,8 +112,8 @@ export default class Application {
       this.update();
     });
 
-    this.resources.on('forkliftModelReady', (forkliftModel) => {
-      this.forklifts = new Forklifts({ forkliftModel, data: { myForkliftId: MY_FORKLIFT_ID }, palettes: this.palettes, scene: this.scene });
+    this.resources.on('forkliftModelReady', (forkliftModel: THREE.Group) => {
+      this.forklifts = new Forklifts({ forkliftModel, /* data: { myForkliftId: MY_FORKLIFT_ID }, */ palettes: this.palettes, scene: this.scene });
 
       this.forklifts.createForklift(MY_FORKLIFT_ID, this.myForklift);
       this.forklifts.forklifts[MY_FORKLIFT_ID] = this.myForklift;
@@ -126,17 +126,18 @@ export default class Application {
     });
 
     //initialize forklifts and loaded palettes
-    this.dataService.on('allStatusDataReady', (data) => {
+    this.dataService.on('allStatusDataReady', ({ forklifts }: WarehouseAllStatus) => {
       if (!this.forklifts) {
         console.log('Forklift model not yet ready!');
         return;
       }
-      this.forklifts.data = { ...data.forklifts };
-      data.forklifts.forEach((item: any) => {
-        if (item.forklift.staplerNr !== MY_FORKLIFT_ID) {
-          this.forklifts.updateForkliftPosition(item.forklift);
-          if (item.palettes.length > 0) {
-            this.forklifts.updateForkliftPalettes(item.forklift.staplerNr, item.palettes);
+      // TODO: data is removed from Forklifts
+      // this.forklifts.data = { ...data.forklifts };
+      forklifts.forEach(({ forklift, palettes }) => {
+        if (forklift.staplerNr !== MY_FORKLIFT_ID) {
+          this.forklifts.updateForkliftPosition(forklift);
+          if (palettes.length > 0) {
+            this.forklifts.updateForkliftPalettes(forklift.staplerNr, palettes);
           }
         }
       });
@@ -276,7 +277,7 @@ export default class Application {
 
   setWorld() {
     this.world = new World({ font: this.resources.font, worldSettings: this.worldSettings });
-    this.dataService.on('warehouseDataReady', (data: Warehouse[]) => {
+    this.dataService.on('warehouseDataReady', (data: Block[]) => {
       this.world.setWarehouse(data);
       this.update();
     });

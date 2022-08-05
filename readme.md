@@ -15,3 +15,6 @@ npm run dev
 # Build for production in the dist/ directory
 npm run build
 ```
+https://www.npmjs.com/package/inversify
+https://github.com/jeffijoe/awilix
+https://www.npmjs.com/package/@sailplane/injector
