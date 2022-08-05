@@ -7,19 +7,13 @@ import palettesMaterials from './palettesMaterials';
 
 import type { WarehousePalette } from '../../types';
 
-type PaletteData = any;
-
 export default class Palettes {
   container: THREE.Object3D;
-  clientsColors: Record<string, string>;
-  palettesGeometries: Record<string, THREE.BoxGeometry>;
-  palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>>;
+  clientsColors: Record<string, string> = {};
+  palettesGeometries: Record<string, THREE.BoxGeometry> = {};
+  palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>> = {};
 
   constructor() {
-    this.clientsColors = {};
-    this.palettesGeometries = {};
-    this.palettesEdgeGeometries = {};
-
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = true;
     this.container.name = 'palettes';
@@ -77,7 +71,7 @@ export default class Palettes {
     return group;
   }
 
-  getMaterialsForPalette(paletteData: PaletteData) {
+  getMaterialsForPalette(paletteData: WarehousePalette) {
     /*
                     if ( data["sd.leDefekt"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
@@ -95,7 +89,7 @@ export default class Palettes {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
     */
-    const isDefect = paletteData.leDefekt === 0 || paletteData.leUnkonform === 0 || paletteData.leGesspert === 0 || paletteData.leQs === 0;
+    const isDefect = paletteData.leDefekt === 0 || paletteData.leUnkonform === 0 || paletteData.leGesperrt === 0 || paletteData.leQs === 0;
 
     //TODO: palette.leGesspert === 0 color
 

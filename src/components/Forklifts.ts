@@ -8,7 +8,7 @@ export default class Forklifts {
   forkliftModel: THREE.Group;
   data: Record<string, string>;
   palettes: Palettes;
-  forklifts: Record<string, THREE.Object3D>;
+  forklifts: Record<string, THREE.Object3D> = {};
 
   constructor({
     forkliftModel,
@@ -29,8 +29,6 @@ export default class Forklifts {
     // this.container = new THREE.Object3D()
     // this.container.matrixAutoUpdate = true
     // this.container.name = 'forklifts'
-
-    this.forklifts = {};
   }
 
   createForklift(id: string, forklift3d?: THREE.Object3D) {

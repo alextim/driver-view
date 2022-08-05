@@ -21,7 +21,7 @@ export default class DataService extends EventEmitter {
 
   getWarehouse() {
     // check local storage 1st
-    this.dataApi.getWarehouseAsync().then((data: Warehouse) => this.trigger('warehouseDataReady', [data]));
+    this.dataApi.getWarehouseAsync().then((data: Warehouse[]) => this.trigger('warehouseDataReady', [data]));
   }
 
   getPalettes(start: number, length: number) {

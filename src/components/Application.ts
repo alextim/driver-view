@@ -1,4 +1,4 @@
-import { IDataApi, WorldSettings } from '../types';
+import { IDataApi, WorldSettings, Warehouse } from '../types';
 
 import * as THREE from 'three';
 import * as dat from 'lil-gui';
@@ -276,7 +276,7 @@ export default class Application {
 
   setWorld() {
     this.world = new World({ font: this.resources.font, worldSettings: this.worldSettings });
-    this.dataService.on('warehouseDataReady', (data) => {
+    this.dataService.on('warehouseDataReady', (data: Warehouse[]) => {
       this.world.setWarehouse(data);
       this.update();
     });

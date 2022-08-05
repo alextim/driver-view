@@ -5,6 +5,8 @@ import { WorldSettings } from '../types';
 import { DRAW_BLOCK_LABELS } from '../constants';
 import { Font } from 'three/examples/jsm/loaders/FontLoader';
 
+import type { Warehouse } from '../types';
+
 export default class World {
   font: Font;
   worldSettings: WorldSettings;
@@ -51,7 +53,7 @@ export default class World {
     this.container.add(plane);
   }
 
-  setWarehouse(data: any[]) {
+  setWarehouse(data: Warehouse[]) {
     this.blocks = new Blocks({ data, font: this.font, drawLabel: DRAW_BLOCK_LABELS });
     this.container.add(this.blocks.container);
     // now in application

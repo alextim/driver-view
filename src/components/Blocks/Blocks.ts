@@ -6,35 +6,30 @@ import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUt
 // import TextSprite from '@seregpie/three.text-sprite'
 import blockMaterials from './blockMaterial';
 
+import type { Warehouse, WarehouseRow } from '../../types';
+
 type TextMesh = THREE.Mesh<TextGeometry, THREE.LineBasicMaterial | THREE.MeshBasicMaterial>;
 
 export default class Blocks {
-  mergeGeometries: boolean;
+  mergeGeometries = false;
   drawLabel: boolean;
 
-  geomitries: Record<string, any>;
+  geomitries: Record<string, any> = {};
 
   font: Font;
-  data: any[];
+  data: Warehouse[];
 
-  labels_7: TextMesh[];
-  labels: TextMesh[];
-  rowLabels: TextMesh[];
+  labels_7: TextMesh[] = [];
+  labels: TextMesh[] = [];
+  rowLabels: TextMesh[] = [];
 
   container: THREE.Object3D;
 
-  constructor({ font, data, drawLabel }: { font: Font; data: any[]; drawLabel: boolean }) {
-    this.mergeGeometries = false;
+  constructor({ font, data, drawLabel }: { font: Font; data: Warehouse[]; drawLabel: boolean }) {
     this.drawLabel = drawLabel;
-
-    this.geomitries = {};
 
     this.font = font;
     this.data = data;
-
-    this.labels_7 = [];
-    this.labels = [];
-    this.rowLabels = [];
 
     // Set up
 
@@ -118,7 +113,7 @@ export default class Blocks {
     return new THREE.Mesh(mergedGeometry, material);
   }
 
-  createBlock(block: any) {
+  createBlock(block: Warehouse) {
     // console.log(block)
     try {
       const blockTyp = block.rows[0].blockTyp;
@@ -139,13 +134,13 @@ export default class Blocks {
       }
 
       const hasLabel = !(blockTyp === 7 || blockTyp === 8);
-      block.rows.forEach((row: any) => void this.createRow(row, block.kuBlockNr, hasLabel));
+      block.rows.forEach((row) => void this.createRow(row, block.kuBlockNr, hasLabel));
     } catch (ex) {
       console.error(block.kuBlockNr + ' ' + ex);
     }
   }
 
-  createRow(row: any, kuBlockNr: any, hasLabel: boolean) {
+  createRow(row: WarehouseRow, kuBlockNr: string, hasLabel: boolean) {
     // const mesh = this.createRowBorder(row, kuBlockNr)
     const mesh = this.createRowBorder(row, kuBlockNr);
     this.container.add(mesh);
@@ -211,7 +206,7 @@ export default class Blocks {
     }
   */
 
-  createRowBorder(row: any, kuBlockNr: any) {
+  createRowBorder(row: WarehouseRow, kuBlockNr: string) {
     const width = row.reiheLaenge,
       height = row.reiheBreite,
       depth = row.reiheBreite; // Z
@@ -328,7 +323,7 @@ export default class Blocks {
     }
   }
 
-  createBlockLabel(block: any) {
+  createBlockLabel(block: Warehouse) {
     const x = block.rows[0].xStart,
       y = block.rows[0].yStart;
     const shift = 1;
@@ -340,7 +335,7 @@ export default class Blocks {
     return label;
   }
 
-  createBlockLabel_7(block: any) {
+  createBlockLabel_7(block: Warehouse) {
     const x = block.rows[0].xStart,
       y = block.rows[0].yStart;
     const shift = 1;
@@ -350,7 +345,7 @@ export default class Blocks {
     return label;
   }
 
-  createRowLabel(row: any, kuBlockNr: any) {
+  createRowLabel(row: WarehouseRow, kuBlockNr: string) {
     const x = row.xStart;
     const y = row.yStart;
     const shift = 1;

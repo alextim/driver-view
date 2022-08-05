@@ -5,7 +5,7 @@ import EventEmitter from '../utils/EventEmitter';
 export default class MqttClient extends EventEmitter {
   mq: Paho.Client;
 
-  constructor(_options: { host: string, port: number }) {
+  constructor(_options: { host: string; port: number }) {
     super();
 
     this.mq = new Paho.Client(_options.host, _options.port, 'browserclient-' + Math.random());
