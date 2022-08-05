@@ -4,8 +4,9 @@ class EventEmitter {
    * Constructor
    */
   constructor() {
-    this.callbacks = {};
-    this.callbacks.base = {};
+    this.callbacks = {
+      base: {},
+    };
   }
 
   /**

@@ -1,5 +1,6 @@
 import jsonp from './jsonp';
 
+/*
 const dummyData = [
   {
     patientName: 'Jon Foo',
@@ -16,8 +17,9 @@ const dummyData = [
     appointmentStatus: 'in progress',
   },
 ];
+*/
 
-export default (callback) =>
+export default (callback: (arg0: any) => any) =>
   jsonp(
     'http://localhost:8081/vna.jsonp',
     //'https://jsfiddle.net/echo/jsonp/?data=' + JSON.stringify(dummyData),

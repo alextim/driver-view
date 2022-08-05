@@ -5,6 +5,8 @@ import { stringToHex } from '../../utils/stringToHex';
 
 import palettesMaterials from './palettesMaterials';
 
+import type { WarehousePalette } from '../../types';
+
 type PaletteData = any;
 
 export default class Palettes {
@@ -23,14 +25,14 @@ export default class Palettes {
     this.container.name = 'palettes';
   }
 
-  addPalettesToWarehouse(palettesData: PaletteData[]) {
+  addPalettesToWarehouse(palettesData: WarehousePalette[]) {
     palettesData.forEach((paletteData) => {
       const group = this.createPalette(paletteData);
       this.container.add(group);
     });
   }
 
-  createPalette(paletteData: PaletteData, namePrefix = '') {
+  createPalette(paletteData: WarehousePalette, namePrefix = '') {
     //todo: check if exists
     if (!namePrefix) {
       namePrefix = PLT_3D_;
@@ -40,7 +42,8 @@ export default class Palettes {
     let dy: number;
     const dz = paletteData.leHoehe;
 
-    if (paletteData.loadingType === '2') {
+    // TODO: paletteData.loadingType === '2'
+    if (paletteData.loadingType === 2) {
       dy = paletteData.leAufnahmeSeite;
       dx = paletteData.leGegenSeite;
     } else {

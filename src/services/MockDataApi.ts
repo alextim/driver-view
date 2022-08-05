@@ -1,4 +1,4 @@
-import { IDataApi } from '../types';
+import { IDataApi, Warehouse, WarehouseSize, WarehousePalettes, WarehouseForklift, WarehauseAllStatus, WarehousePalette } from '../types';
 
 import warehouseJSON from '../assets/mock/warehouseJSON-3.json';
 import searchPalettesJSON from '../assets/mock/searchPalettesJSON-3.json';
@@ -9,11 +9,11 @@ export default class MockDataApi implements IDataApi {
   async getWarehouseSizeAsync() {
     // return Promise.resolve([{x: 680, y: 330}]) // 1
     // return Promise.resolve([{ x: 192.5, y: 183 }]) // 2 thai
-    return Promise.resolve([{ x: 42.6, y: 37.2 }]); // 3 gps
+    return Promise.resolve([{ x: 42.6, y: 37.2 } as WarehouseSize]); // 3 gps
   }
 
   async getWarehouseAsync() {
-    return Promise.resolve(warehouseJSON);
+    return Promise.resolve(warehouseJSON as unknown as Warehouse);
   }
 
   async getPalettesCountAsync() {
@@ -24,22 +24,22 @@ export default class MockDataApi implements IDataApi {
     return Promise.resolve({
       recordsTotal: searchPalettesJSON.data.length,
       data: searchPalettesJSON.data.slice(start, start + length - 1),
-    });
+    } as unknown as WarehousePalettes);
   }
 
   async getColorsSettingsAsync() {
-    return Promise.resolve(warehouseJSON);
+    return Promise.resolve(warehouseJSON as unknown as Warehouse);
   }
 
   async getForkliftListOnlineAsync() {
-    return Promise.resolve(forkliftListOnlineJSON);
+    return Promise.resolve(forkliftListOnlineJSON as unknown as WarehouseForklift);
   }
 
   async getAllStatusAsync() {
-    return Promise.resolve(allStatusJSON);
+    return Promise.resolve(allStatusJSON as unknown as WarehauseAllStatus);
   }
 
   async getPalettesByEpcNrAsync(palettesId: any[]) {
-    return Promise.resolve(searchPalettesJSON.data.slice(0, palettesId.length - 1));
+    return Promise.resolve(searchPalettesJSON.data.slice(0, palettesId.length - 1) as unknown as WarehousePalette[]);
   }
 }
