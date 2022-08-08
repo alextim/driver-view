@@ -1,13 +1,12 @@
 import StatsJs from 'stats.js';
 
 export default class Stats {
-  instance: StatsJs;
-  max = 40;
-  ignoreMaxed = true;
-  active = false;
-
-  queryCreated!: boolean;
-  render!: {
+  private instance: StatsJs;
+  private max = 40;
+  private ignoreMaxed = true;
+  private active = false;
+  private queryCreated!: boolean;
+  private render!: {
     context: any;
     extension: any;
     panel: any;

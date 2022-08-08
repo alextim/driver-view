@@ -1,4 +1,19 @@
-export interface IDataService {
+export interface IEventEmitter {
+  on: (_names: string, callback: (arg0: any) => any) => void;
+  off: (_names: string) => void;
+  trigger: (_name: string, _args: any[] = []) => void;
+}
+
+export interface IMqttClient extends IEventEmitter {
+}
+
+export interface IResourcesService extends IEventEmitter {
+  font: Font;
+  startLoading: () => void;
+}
+
+export interface IDataService extends IEventEmitter {
+  dataApi: IDataApi;
   getWarehouseSize: () => void;
   getWarehouse: () => void;
   getPalettes: (start: number, length: number) => void;
@@ -9,10 +24,10 @@ export interface IDataService {
 
 export interface IDataApi {
   getWarehouseSizeAsync: () => Promise<WarehouseSize[]>;
-  getWarehouseAsync: () => Promise<Warehouse[]>;
+  getWarehouseAsync: () => Promise<Block[]>;
   getPalettesCountAsync: () => Promise<{ palettesCount: number }>;
   getPalettesAsync: (start: number, length: number) => Promise<WarehousePalettes>;
-  getColorsSettingsAsync: () => Promise<Warehouse>;
+  getColorsSettingsAsync: () => Promise<WarehouseClientColors>;
   getForkliftListOnlineAsync: () => Promise<WarehouseForklift>;
   getAllStatusAsync: () => Promise<WarehouseAllStatus>;
   getPalettesByEpcNrAsync: (palettesId: any[]) => Promise<WarehousePalette[]>;
@@ -27,8 +42,6 @@ export type WorldSettings = {
   maxZoom: number;
   controlsTarget: [number, number, number];
   topCameraPosition: [number, number, number];
-  floorColor: number;
-  sceneColor: number;
 };
 
 export type Block = {
@@ -68,16 +81,20 @@ export type WarehouseSize = {
   y: number;
 };
 
+export type WarehousePalettesCount = {
+  palettesCount: number;
+};
+
 export type WarehousePalette = {
-  staplerNr: number;
-  posIdentNr: string;
-  xkoord: number;
-  ykoord: number;
-  winkel: number;
-  lagerort: number;
+  staplerNr: number;  // -
+  posIdentNr: string; // -
+  xkoord: number; 
+  ykoord: number;  
+  winkel: number; 
+  lagerort: number; // -
   epcNr: string;
   artikel: string;
-  articleDesc: string;
+  articleDesc: string; // -
 
   menge: number;
   leAufnahmeSeite: number;
@@ -89,10 +106,14 @@ export type WarehousePalette = {
   leUnkonform: number;
   leGesperrt: number;
   leQs: number;
-  leAdditional2: number;
-  additionalChar4: number;
-  additionalChar5: number;
+  leAdditional2: number; // -
+  additionalChar4: number; // -
+  additionalChar5: number; // -
 };
+
+export type WarehouseClientColors = Record<string, string>;
+
+export type WarehousePalettePartial = Omit<WarehousePalette, 'staplerNr' | 'posIdentNr' | 'lagerort' | 'articleDesc' | 'leAdditional2' | 'additionalChar4' | 'additionalChar5'>;
 
 export type WarehousePalettes = {
   recordsTotal: number;
@@ -135,10 +156,21 @@ export type WarehouseAllStatus = {
 
 export type ForkliftStatus = {
   staplerNr: string;
-  bereit: string;
   xkoord: number;
   ykoord: number;
   winkel: number;
+};
+
+export type PaletteStatusMqttDrop = ForkliftStatus & {
+  epc_nr: string;
+  le_hoehe: number;
+  le_ablage_hoehe: number;  
+};
+
+export type PaletteStatusMqttDropUnused = ForkliftStatus & {
+  epcNr: string;
+  leHoehe: number;
+  ablageHoehe: number;  
 };
 
 export type PaletteStatus = {

@@ -1,17 +1,13 @@
-class EventEmitter {
-  callbacks: Record<string, any>;
-  /**
-   * Constructor
-   */
+import { IEventEmitter } from '../types';
+class EventEmitter implements IEventEmitter {
+  private callbacks: Record<string, any>;
+
   constructor() {
     this.callbacks = {
       base: {},
     };
   }
 
-  /**
-   * On
-   */
   on(_names: string, callback: (arg0: any) => any) {
     // Errors
     if (!_names) {
@@ -30,15 +26,19 @@ class EventEmitter {
     const names = this.resolveNames(_names);
 
     // Each name
-    names.forEach(function (_name) {
+    names.forEach((_name) => {
       // Resolve name
       const name = that.resolveName(_name);
 
       // Create namespace if not exist
-      if (!(that.callbacks[name.namespace] instanceof Object)) that.callbacks[name.namespace] = {};
+      if (!(that.callbacks[name.namespace] instanceof Object)) {
+        that.callbacks[name.namespace] = {};
+      }
 
       // Create callback if not exist
-      if (!(that.callbacks[name.namespace][name.value] instanceof Array)) that.callbacks[name.namespace][name.value] = [];
+      if (!(that.callbacks[name.namespace][name.value] instanceof Array)) {
+        that.callbacks[name.namespace][name.value] = [];
+      }
 
       // Add callback
       that.callbacks[name.namespace][name.value].push(callback);
@@ -47,9 +47,6 @@ class EventEmitter {
     return this;
   }
 
-  /**
-   * Off
-   */
   off(_names: string) {
     // Errors
     if (!_names) {
@@ -63,17 +60,15 @@ class EventEmitter {
     const names = this.resolveNames(_names);
 
     // Each name
-    names.forEach(function (_name) {
+    names.forEach((_name) => {
       // Resolve name
       const name = that.resolveName(_name);
 
       // Remove namespace
       if (name.namespace !== 'base' && name.value === '') {
         delete that.callbacks[name.namespace];
-      }
-
-      // Remove specific callback in namespace
-      else {
+      } else {
+        // Remove specific callback in namespace
         // Default
         if (name.namespace === 'base') {
           // Try to remove from each namespace
@@ -82,7 +77,9 @@ class EventEmitter {
               delete that.callbacks[namespace][name.value];
 
               // Remove namespace if empty
-              if (Object.keys(that.callbacks[namespace]).length === 0) delete that.callbacks[namespace];
+              if (Object.keys(that.callbacks[namespace]).length === 0) {
+                delete that.callbacks[namespace];
+              }
             }
           }
         }
@@ -92,7 +89,9 @@ class EventEmitter {
           delete that.callbacks[name.namespace][name.value];
 
           // Remove namespace if empty
-          if (Object.keys(that.callbacks[name.namespace]).length === 0) delete that.callbacks[name.namespace];
+          if (Object.keys(that.callbacks[name.namespace]).length === 0) {
+            delete that.callbacks[name.namespace];
+          }
         }
       }
     });
@@ -152,27 +151,23 @@ class EventEmitter {
       that.callbacks[name.namespace][name.value].forEach((callback: any) => {
         result = callback.apply(that, _args);
 
-        if (typeof finalResult === 'undefined') finalResult = result;
+        if (typeof finalResult === 'undefined') {
+          finalResult = result;
+        }
       });
     }
 
     return finalResult;
   }
 
-  /**
-   * Resolve names
-   */
-  resolveNames(names: string) {
+  private resolveNames(names: string) {
     return names
       .replace(/[^a-zA-Z0-9 ,/.]/g, '')
       .replace(/[,/]+/g, ' ')
       .split(' ');
   }
 
-  /**
-   * Resolve name
-   */
-  resolveName(name: string) {
+  private resolveName(name: string) {
     const parts = name.split('.');
 
     return {

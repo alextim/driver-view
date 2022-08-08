@@ -1,34 +1,34 @@
 import * as THREE from 'three';
-import Palettes from './Palettes';
+import PalettesView from '../PalettesView';
 
-import { MY_FORKLIFT_ID, FRK_PLT_3D_, PLT_3D_ } from '../constants';
-import type { ForkliftStatus, PaletteStatus, WarehousePalette } from '../types';
+import { MY_FORKLIFT_ID, FRK_PLT_3D_, PLT_3D_ } from '../../constants';
+import type { ForkliftStatus, PaletteStatus, PaletteStatusMqttDrop, PaletteStatusMqttDropUnused, WarehousePalette, WarehousePalettePartial } from '../../types';
 
-export default class Forklifts {
+export default class ForkliftsView {
   private scene: THREE.Scene;
   private forkliftModel: THREE.Group;
   // TODO: data is removed from Forklifts
   // private data: Record<string, string>;
-  private palettes: Palettes;
+  private palettesView: PalettesView;
   forklifts: Record<string, THREE.Object3D> = {};
 
   constructor({
     forkliftModel,
     // TODO: data is removed from Forklifts
     // data,
-    palettes,
+    palettesView,
     scene,
   }: {
       forkliftModel: THREE.Group;
     // TODO: data is removed from Forklifts
     // data: Record<string, string>;
-    palettes: Palettes;
+    palettesView: PalettesView;
     scene: THREE.Scene;
   }) {
     this.forkliftModel = forkliftModel;
     // TODO: data is removed from Forklifts
     // this.data = data;
-    this.palettes = palettes;
+    this.palettesView = palettesView;
     this.scene = scene;
 
     // this.container = new THREE.Object3D()
@@ -66,7 +66,7 @@ export default class Forklifts {
     return forklift3d;
   }
 
-  getForklift(id: string) {
+  private getForklift(id: string) {
     if (this.forklifts[id]) {
       return this.forklifts[id];
     }
@@ -78,6 +78,7 @@ export default class Forklifts {
       // updated by tcpcom
       return;
     }
+
     const forklift3d = this.getForklift(staplerNr);
     if (!forklift3d) {
       console.warn(`no forkliftData.staplerNr=${staplerNr}`);
@@ -88,6 +89,7 @@ export default class Forklifts {
       forklift3d.position.x = xkoord;
       forklift3d.position.y = ykoord;
     }
+
     const rad = winkel * (Math.PI / 180);
     if (forklift3d.rotation.z != rad) {
       forklift3d.rotation.z = rad;
@@ -197,41 +199,55 @@ export default class Forklifts {
   private pickupForkliftPalettes(forklift3d: THREE.Object3D, palettesData: PaletteStatus[]) {
     let zPalette = 0.05;
     palettesData.forEach((el) => {
+      const { artikel, menge, leAufnahmeSeite, leGegenSeite, leHoehe, loadingType: loadingTypeSrc, leDefekt, leUnkonform, leGesperrt, leQs } = el;
       //pickup data model
-      const epcNr = el.epc_nr ?? el.epcNr;
+      // const epcNr = el.epc_nr ?? el.epcNr;
+      const epcNr = el.epcNr;
+      const wp: WarehousePalettePartial = {
 
-      const wp: WarehousePalette = {
-        ...el,
         xkoord: 1.7,
         ykoord: 0,
-        ablageHoehe: zPalette,
         winkel: 0,
+        ablageHoehe: zPalette,
+
+        epcNr,
+        artikel,
+      
+        menge,
+        leAufnahmeSeite,
+        leGegenSeite,
+        leHoehe,
+
+        // TODO: 
+        loadingType: parseInt(loadingTypeSrc),
+
+        leDefekt,
+        leUnkonform,
+        leGesperrt,
+        leQs,
       };
 
-      const testFrkPlt = forklift3d.children.filter((x) => x.name === FRK_PLT_3D_ + epcNr);
+      const testFrkPlt = forklift3d.children.filter(({ name }) => name === `${FRK_PLT_3D_}${epcNr}`);
       if (testFrkPlt.length > 0) {
-        zPalette += el.leHoehe;
+        zPalette += leHoehe;
 
         //check z
         if (testFrkPlt[0].position.z !== zPalette) {
           // todo: move
         }
       } else {
-        const testWrhsPlt = this.palettes.container.children.filter((x) => x.name === PLT_3D_ + epcNr);
+        const testWrhsPlt = this.palettesView.container.children.filter(({ name }) => name === `${PLT_3D_}${epcNr}`);
         if (testWrhsPlt.length > 0) {
-          let { leHoehe } = el;
-          if (!leHoehe) {
-            // get from mesh geometry
-            // TODO: geometry
-            leHoehe = (testWrhsPlt[0].children[0] as unknown as any).geometry.parameters.height;
-          }
-          zPalette += leHoehe;
+          // if leHoehe === 0 then get it from mesh geometry
+          // TODO: geometry
+          const h = leHoehe ? leHoehe : (testWrhsPlt[0].children[0] as unknown as any).geometry.parameters.height;
+          zPalette += h;
           //hide in warehouse add to forklift
           const frkPlt = testWrhsPlt[0].clone();
           testWrhsPlt[0].visible = false; // ???
 
-          frkPlt.name = FRK_PLT_3D_ + el.epcNr;
-          frkPlt.position.set(wp.xkoord, wp.ykoord, wp.ablageHoehe + leHoehe / 2);
+          frkPlt.name = FRK_PLT_3D_ + epcNr;
+          frkPlt.position.set(wp.xkoord, wp.ykoord, wp.ablageHoehe + h / 2);
           if (wp.winkel % 180 !== 0) {
             // TODO: frkPlt.rotateZ = el.winkel * (Math.PI / 180); // _1_DEG_TO_RAD
             // frkPlt.rotateZ = el.winkel * (Math.PI / 180); // _1_DEG_TO_RAD
@@ -240,21 +256,23 @@ export default class Forklifts {
           frkPlt.updateMatrix();
           forklift3d.add(frkPlt);
         } else {
-          zPalette += el.leHoehe;
+          zPalette += leHoehe;
 
-          const palette = this.palettes.createPalette(wp, FRK_PLT_3D_);
+          const palette = this.palettesView.createPalette(wp, FRK_PLT_3D_);
           forklift3d.add(palette);
         }
       }
     });
   }
 
-  dropForkliftPalettes(forklift3d: THREE.Object3D, palettesData: any[]) {
+  private dropForkliftPalettes(forklift3d: THREE.Object3D, palettesData: Array<PaletteStatusMqttDrop | PaletteStatusMqttDropUnused>) {
     // assume palettes already exists !!!
     // todo: review it
 
     for (const el of palettesData) {
-      const epcNr = el.epc_nr ?? el.epcNr;
+      const epcNr =  (el as PaletteStatusMqttDrop).epc_nr ?? (el as PaletteStatusMqttDropUnused).epcNr;
+      const ablageHoehe = (el as PaletteStatusMqttDrop).le_ablage_hoehe ?? (el as PaletteStatusMqttDropUnused).ablageHoehe;
+      const leHoehe = (el as PaletteStatusMqttDrop).le_hoehe ?? (el as PaletteStatusMqttDropUnused).leHoehe;
 
       const testFrkPlt = forklift3d.children.filter((x) => x.name === FRK_PLT_3D_ + epcNr);
       const testPlt = forklift3d.children.filter((x) => x.name === PLT_3D_ + epcNr);
@@ -262,18 +280,14 @@ export default class Forklifts {
       const frkPlt = testFrkPlt.length > 0 ? testFrkPlt[0] : null;
       let plt = testPlt.length > 0 ? testPlt[0] : null;
 
-      const ablageHoehe = el.le_ablage_hoehe ?? el.ablageHoehe;
-      const leHoehe = el.le_hoehe ?? el.leHoehe;
-
       // display on warehouse
-
       if (!plt) {
         if (!frkPlt) {
-          console.error(`BUG: can't create droped palettes for warehouse: ${epcNr}`);
+          console.error(`BUG: can't create dropped palettes for warehouse: ${epcNr}`);
         } else {
           plt = frkPlt.clone();
           plt.name = PLT_3D_ + epcNr;
-          this.palettes.container.add(plt);
+          this.palettesView.container.add(plt);
         }
       }
 
@@ -297,7 +311,10 @@ export default class Forklifts {
     }
   }
 
-  updateStatus(data: undefined | any[]) {
+  updateStatus(data: ForkliftStatus | undefined) {
+    if (!data) {
+      return;
+    }    
     /*
     const sampleData = [
       {
@@ -316,7 +333,7 @@ export default class Forklifts {
     this.updateForkliftPosition(data);
   }
 
-  drop(data: undefined | PaletteStatus[]) {
+  drop(data: PaletteStatusMqttDrop[] | undefined) {
     if (!data?.length) {
       return;
     }

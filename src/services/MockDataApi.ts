@@ -1,4 +1,4 @@
-import { IDataApi, Block, WarehouseSize, WarehousePalettes, WarehouseForklift, WarehouseAllStatus, WarehousePalette } from '../types';
+import { IDataApi, Block, WarehouseSize, WarehousePalettes, WarehouseForklift, WarehouseAllStatus, WarehousePalette, WarehouseClientColors } from '../types';
 
 import warehouseJSON from '../assets/mock/warehouseJSON-3.json';
 import searchPalettesJSON from '../assets/mock/searchPalettesJSON-3.json';
@@ -28,7 +28,7 @@ export default class MockDataApi implements IDataApi {
   }
 
   async getColorsSettingsAsync() {
-    return Promise.resolve(warehouseJSON as unknown as Block);
+    return Promise.resolve({} as unknown as WarehouseClientColors);
   }
 
   async getForkliftListOnlineAsync() {

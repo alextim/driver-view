@@ -1,7 +1,7 @@
 import EventEmitter from './EventEmitter';
 
 export default class Sizes extends EventEmitter {
-  $sizeViewport: HTMLDivElement;
+  private $sizeViewport: HTMLDivElement;
 
   viewport: {
     width: number;
@@ -40,7 +40,7 @@ export default class Sizes extends EventEmitter {
   /**
    * Resize
    */
-  resize() {
+   private resize() {
     document.body.appendChild(this.$sizeViewport);
     this.viewport.width = this.$sizeViewport.offsetWidth;
     this.viewport.height = this.$sizeViewport.offsetHeight;

@@ -1,5 +1,5 @@
 import EventEmitter from '../utils/EventEmitter';
-import { IDataService, IDataApi, WarehouseAllStatus, WarehouseForklift, Block, WarehouseSize, WarehousePalettes } from '../types';
+import { IDataApi, WarehouseAllStatus, WarehouseForklift, Block, WarehouseSize, WarehousePalettes, WarehouseClientColors, WarehousePalettesCount } from '../types';
 
 export default class DataService extends EventEmitter {
   dataApi: IDataApi;
@@ -8,10 +8,6 @@ export default class DataService extends EventEmitter {
     super();
 
     this.dataApi = dataApi;
-
-    this.getWarehouseSize();
-    this.getWarehouse();
-    this.getColorsSettings();
   }
 
   getWarehouseSize() {
@@ -29,7 +25,7 @@ export default class DataService extends EventEmitter {
   }
 
   getColorsSettings() {
-    this.dataApi.getColorsSettingsAsync().then((data: Block) => this.trigger('colorSettingsDataReady', [data]));
+    this.dataApi.getColorsSettingsAsync().then((data: WarehouseClientColors) => this.trigger('colorSettingsDataReady', [data]));
   }
 
   getForkliftListOnline() {

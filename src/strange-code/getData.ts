@@ -19,9 +19,11 @@ const dummyData = [
 ];
 */
 
-export default (callback: (arg0: any) => any) =>
-  jsonp(
-    'http://localhost:8081/vna.jsonp',
-    //'https://jsfiddle.net/echo/jsonp/?data=' + JSON.stringify(dummyData),
-    (response) => callback(JSON.parse(response.data)),
-  );
+//const url = 'https://jsfiddle.net/echo/jsonp/?data=' + JSON.stringify(dummyData);
+const url = 'http://localhost:8081/vna.jsonp';
+
+function getData(callback: (arg0: any) => any) {
+  return jsonp(url, (response) => callback(JSON.parse(response.data)));
+}
+
+export default getData;

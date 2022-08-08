@@ -5,11 +5,11 @@ import { stringToHex } from '../../utils/stringToHex';
 
 import palettesMaterials from './palettesMaterials';
 
-import type { WarehousePalette } from '../../types';
+import type { WarehousePalette, WarehousePalettePartial, WarehouseClientColors } from '../../types';
 
 export default class Palettes {
   container: THREE.Object3D;
-  clientsColors: Record<string, string> = {};
+  clientsColors: WarehouseClientColors = {};
   private palettesGeometries: Record<string, THREE.BoxGeometry> = {};
   private palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>> = {};
 
@@ -26,7 +26,7 @@ export default class Palettes {
     });
   }
 
-  createPalette(paletteData: WarehousePalette, namePrefix = '') {
+  createPalette(paletteData: WarehousePalettePartial, namePrefix = '') {
     //todo: check if exists
     if (!namePrefix) {
       namePrefix = PLT_3D_;
@@ -71,7 +71,7 @@ export default class Palettes {
     return group;
   }
 
-  getMaterialsForPalette(paletteData: WarehousePalette) {
+  private getMaterialsForPalette({ artikel, leDefekt, leUnkonform, leGesperrt, leQs }: WarehousePalettePartial) {
     /*
                     if ( data["sd.leDefekt"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
@@ -89,16 +89,17 @@ export default class Palettes {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
     */
-    const isDefect = paletteData.leDefekt === 0 || paletteData.leUnkonform === 0 || paletteData.leGesperrt === 0 || paletteData.leQs === 0;
 
+    
     //TODO: palette.leGesspert === 0 color
 
-    if (isDefect) {
+    // isDefect
+    if (leDefekt === 0 || leUnkonform === 0 || leGesperrt === 0 || leQs === 0) {
       return palettesMaterials.defective;
     }
 
     //const selector = getSelectorFromName(palette.additionalChar4);
-    const selector = this.getSelectorFromName(paletteData.artikel) as keyof typeof palettesMaterials;
+    const selector = this.getSelectorFromName(artikel) as keyof typeof palettesMaterials;
     if (!palettesMaterials[selector]) {
       let color = '#FFFFFF';
       if (this.clientsColors[selector]) {
@@ -108,9 +109,7 @@ export default class Palettes {
         this.clientsColors[selector] = color;
       }
 
-      const mat = new THREE.MeshBasicMaterial({
-        color: color,
-      });
+      const mat = new THREE.MeshBasicMaterial({ color });
       palettesMaterials[selector] = mat;
     }
 
@@ -119,21 +118,18 @@ export default class Palettes {
 
     //not used now
     /*
-    const artikel = paletteData.artikel;
     if (artikel.indexOf('-') > -1) {
       return palettesMaterials.plum;
     }
-    else if (artikel.indexOf('.') > -1) {
+    if (artikel.indexOf('.') > -1) {
       return palettesMaterials.orange;
     }
-    else {
-      return palettesMaterials.aquamarine;
-    }
+    return palettesMaterials.aquamarine;
     */
   }
 
   // site specific
-  getSelectorFromName(name: string) {
+  private getSelectorFromName(name: string) {
     return name ? name.split('-')[0] : 'empty';
 
     //--strip name to first space or /
@@ -152,23 +148,27 @@ export default class Palettes {
     */
   }
 
-  getGeometriesBySize(x: number, y: number, z: number) {
-    const s = 'box_' + x + '_' + y + '_' + z;
-
-    if (!this.palettesGeometries[s]) {
-      this.palettesGeometries[s] = new THREE.BoxBufferGeometry(x, y, z);
-    }
-
-    return this.palettesGeometries[s];
+  private formatKey(x: number, y: number, z: number) {
+    return 'box_' + x + '_' + y + '_' + z;
   }
 
-  getEdgeGeometriesBySize(x: number, y: number, z: number) {
-    const s = 'box_' + x + '_' + y + '_' + z;
+  private getGeometriesBySize(x: number, y: number, z: number) {
+    const key = this.formatKey(x, y, z); 
 
-    if (!this.palettesEdgeGeometries[s]) {
-      this.palettesEdgeGeometries[s] = new THREE.EdgesGeometry(this.getGeometriesBySize(x, y, z));
+    if (!this.palettesGeometries[key]) {
+      this.palettesGeometries[key] = new THREE.BoxBufferGeometry(x, y, z);
     }
 
-    return this.palettesEdgeGeometries[s];
+    return this.palettesGeometries[key];
+  }
+
+  private getEdgeGeometriesBySize(x: number, y: number, z: number) {
+    const key = this.formatKey(x, y, z); 
+
+    if (!this.palettesEdgeGeometries[key]) {
+      this.palettesEdgeGeometries[key] = new THREE.EdgesGeometry(this.getGeometriesBySize(x, y, z));
+    }
+
+    return this.palettesEdgeGeometries[key];
   }
 }
