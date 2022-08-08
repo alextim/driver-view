@@ -18,14 +18,24 @@ export default class Application {
   private dataService: IDataService;
   private resources: IResourcesService;
   private mqttClient: IMqttClient;
-  
+
   private appView!: AppView;
   private worldView!: WorldView;
   private blocksView!: BlocksView;
   private forkliftsView!: ForkliftsView;
   private palettesView: PalettesView;
 
-  constructor({ targetElement, dataService, mqttClient, resources }: { targetElement: HTMLElement | null; dataService: IDataService, mqttClient: IMqttClient , resources: IResourcesService}) {
+  constructor({
+    targetElement,
+    dataService,
+    mqttClient,
+    resources,
+  }: {
+    targetElement: HTMLElement | null;
+    dataService: IDataService;
+    mqttClient: IMqttClient;
+    resources: IResourcesService;
+  }) {
     if (!targetElement) {
       throw new Error('targetElement is null');
     }
@@ -42,7 +52,7 @@ export default class Application {
     this.blocksView = new BlocksView({ font: this.resources.font, drawLabel: DRAW_BLOCK_LABELS });
     this.appView.add(this.blocksView.container);
     // this.worldView.container.add(this.blocksView.container);
-    
+
     this.palettesView = new PalettesView();
     this.appView.add(this.palettesView.container);
 
@@ -56,7 +66,7 @@ export default class Application {
       this.blocksView.setBlocks(data);
       this.appView.update();
     });
-    
+
     this.dataService.on('colorSettingsDataReady', (clientsColors: WarehouseClientColors) => {
       this.palettesView.clientsColors = clientsColors;
       this.dataService.dataApi.getPalettesCountAsync().then(({ palettesCount }) => {
@@ -75,7 +85,11 @@ export default class Application {
     });
 
     this.resources.on('forkliftModelReady', (forkliftModel: THREE.Group) => {
-      this.forkliftsView = new ForkliftsView({ forkliftModel, /* data: { myForkliftId: MY_FORKLIFT_ID }, */ palettesView: this.palettesView, scene: this.appView.scene });
+      this.forkliftsView = new ForkliftsView({
+        forkliftModel,
+        /* data: { myForkliftId: MY_FORKLIFT_ID }, */ palettesView: this.palettesView,
+        scene: this.appView.scene,
+      });
 
       this.forkliftsView.createForklift(MY_FORKLIFT_ID, this.appView.myForklift);
       // TODO: ???? this.forkliftsView.forklifts[MY_FORKLIFT_ID] = this.myForklift;
@@ -142,7 +156,7 @@ export default class Application {
 
     this.dataService.getWarehouseSize();
     this.dataService.getWarehouse();
-    this.dataService.getColorsSettings();    
+    this.dataService.getColorsSettings();
   }
 
   private LOAD_TCPCOM_DATA() {

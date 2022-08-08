@@ -4,8 +4,7 @@ export interface IEventEmitter {
   trigger: (_name: string, _args: any[] = []) => void;
 }
 
-export interface IMqttClient extends IEventEmitter {
-}
+export interface IMqttClient extends IEventEmitter {}
 
 export interface IResourcesService extends IEventEmitter {
   font: Font;
@@ -86,11 +85,11 @@ export type WarehousePalettesCount = {
 };
 
 export type WarehousePalette = {
-  staplerNr: number;  // -
+  staplerNr: number; // -
   posIdentNr: string; // -
-  xkoord: number; 
-  ykoord: number;  
-  winkel: number; 
+  xkoord: number;
+  ykoord: number;
+  winkel: number;
   lagerort: number; // -
   epcNr: string;
   artikel: string;
@@ -113,7 +112,10 @@ export type WarehousePalette = {
 
 export type WarehouseClientColors = Record<string, string>;
 
-export type WarehousePalettePartial = Omit<WarehousePalette, 'staplerNr' | 'posIdentNr' | 'lagerort' | 'articleDesc' | 'leAdditional2' | 'additionalChar4' | 'additionalChar5'>;
+export type WarehousePalettePartial = Omit<
+  WarehousePalette,
+  'staplerNr' | 'posIdentNr' | 'lagerort' | 'articleDesc' | 'leAdditional2' | 'additionalChar4' | 'additionalChar5'
+>;
 
 export type WarehousePalettes = {
   recordsTotal: number;
@@ -164,13 +166,13 @@ export type ForkliftStatus = {
 export type PaletteStatusMqttDrop = ForkliftStatus & {
   epc_nr: string;
   le_hoehe: number;
-  le_ablage_hoehe: number;  
+  le_ablage_hoehe: number;
 };
 
 export type PaletteStatusMqttDropUnused = ForkliftStatus & {
   epcNr: string;
   leHoehe: number;
-  ablageHoehe: number;  
+  ablageHoehe: number;
 };
 
 export type PaletteStatus = {

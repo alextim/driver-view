@@ -4,7 +4,7 @@ export default (url: string, callback: (arg0: any) => void) => {
   // TypeScript TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'
   // window[callbackName] = (data: any) => {
   (window as { [key: string]: any })[callbackName] = (data: any) => {
-      // delete window[callbackName]
+    // delete window[callbackName]
     // document.body.removeChild(script)
     callback(data);
   };

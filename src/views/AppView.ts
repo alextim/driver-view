@@ -125,7 +125,7 @@ export default class AppView {
 
     this.myForklift.add(this.frontCamera);
     // this.myForklift.add(this.helper);
-    this.scene.add(this.myForklift);      
+    this.scene.add(this.myForklift);
   }
 
   public add(element: THREE.Object3D) {

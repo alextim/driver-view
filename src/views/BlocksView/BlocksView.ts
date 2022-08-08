@@ -6,7 +6,7 @@ import type { TextMesh } from './helpers/mergeMesh';
 // import TextSprite from '@seregpie/three.text-sprite'
 import blockMaterials, { getMaterialByBlockType } from './helpers/blockMaterial';
 import { createLabel } from './helpers/createLabel';
- 
+
 import type { Block, BlockRow } from '../../types';
 
 export default class BlocksView {
@@ -114,8 +114,7 @@ export default class BlocksView {
           default:
             if (this.mergeGeometries) {
               this.labels.push(this.createBlockLabel(block));
-            }
-            else {
+            } else {
               this.container.add(this.createBlockLabel(block));
             }
         }
@@ -136,8 +135,7 @@ export default class BlocksView {
       const label = this.createRowLabel(row /*, kuBlockNr */);
       if (this.mergeGeometries) {
         this.rowLabels.push(label);
-      }
-      else {
+      } else {
         this.container.add(label);
       }
     }
@@ -222,9 +220,9 @@ export default class BlocksView {
     if (!this.geomitries[key]) {
       const dx = width / 2;
       const dy = height / 2;
-  
+
       const vertices = new Float32Array([+dx, -dy, 0, +dx, +dy, 0, -dx, +dy, 0, -dx, -dy, 0, +dx, -dy, 0]);
-  
+
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
       this.geomitries[key] = geometry;
@@ -236,9 +234,7 @@ export default class BlocksView {
     return this.geomitries[key];
   }
 
-
-
-  private createBlockLabel({ kuBlockNr, rows: [{ xStart: x, yStart: y }]}: Block) {
+  private createBlockLabel({ kuBlockNr, rows: [{ xStart: x, yStart: y }] }: Block) {
     // const shift = 1;
 
     const label = createLabel(kuBlockNr, x, y, 6, 0, 0, 0.5, blockMaterials.blockLabel2, this.font);
@@ -248,7 +244,7 @@ export default class BlocksView {
     return label;
   }
 
-  private createBlockLabel_7({ kuBlockNr, rows: [{ xStart: x, yStart: y, winkel }]}: Block) {
+  private createBlockLabel_7({ kuBlockNr, rows: [{ xStart: x, yStart: y, winkel }] }: Block) {
     // const shift = 1;
 
     const label = createLabel(kuBlockNr, x, y, 0, winkel - 45, 0, 0.5, blockMaterials.blockType_7, this.font);

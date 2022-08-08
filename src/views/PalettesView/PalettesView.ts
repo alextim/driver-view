@@ -90,7 +90,6 @@ export default class Palettes {
                   }
     */
 
-    
     //TODO: palette.leGesspert === 0 color
 
     // isDefect
@@ -153,7 +152,7 @@ export default class Palettes {
   }
 
   private getGeometriesBySize(x: number, y: number, z: number) {
-    const key = this.formatKey(x, y, z); 
+    const key = this.formatKey(x, y, z);
 
     if (!this.palettesGeometries[key]) {
       this.palettesGeometries[key] = new THREE.BoxBufferGeometry(x, y, z);
@@ -163,7 +162,7 @@ export default class Palettes {
   }
 
   private getEdgeGeometriesBySize(x: number, y: number, z: number) {
-    const key = this.formatKey(x, y, z); 
+    const key = this.formatKey(x, y, z);
 
     if (!this.palettesEdgeGeometries[key]) {
       this.palettesEdgeGeometries[key] = new THREE.EdgesGeometry(this.getGeometriesBySize(x, y, z));

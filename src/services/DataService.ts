@@ -1,5 +1,14 @@
 import EventEmitter from '../utils/EventEmitter';
-import { IDataApi, WarehouseAllStatus, WarehouseForklift, Block, WarehouseSize, WarehousePalettes, WarehouseClientColors, WarehousePalettesCount } from '../types';
+import {
+  IDataApi,
+  WarehouseAllStatus,
+  WarehouseForklift,
+  Block,
+  WarehouseSize,
+  WarehousePalettes,
+  WarehouseClientColors,
+  WarehousePalettesCount,
+} from '../types';
 
 export default class DataService extends EventEmitter {
   dataApi: IDataApi;

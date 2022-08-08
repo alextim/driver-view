@@ -2,7 +2,14 @@ import * as THREE from 'three';
 import PalettesView from '../PalettesView';
 
 import { MY_FORKLIFT_ID, FRK_PLT_3D_, PLT_3D_ } from '../../constants';
-import type { ForkliftStatus, PaletteStatus, PaletteStatusMqttDrop, PaletteStatusMqttDropUnused, WarehousePalette, WarehousePalettePartial } from '../../types';
+import type {
+  ForkliftStatus,
+  PaletteStatus,
+  PaletteStatusMqttDrop,
+  PaletteStatusMqttDropUnused,
+  WarehousePalette,
+  WarehousePalettePartial,
+} from '../../types';
 
 export default class ForkliftsView {
   private scene: THREE.Scene;
@@ -19,7 +26,7 @@ export default class ForkliftsView {
     palettesView,
     scene,
   }: {
-      forkliftModel: THREE.Group;
+    forkliftModel: THREE.Group;
     // TODO: data is removed from Forklifts
     // data: Record<string, string>;
     palettesView: PalettesView;
@@ -199,12 +206,22 @@ export default class ForkliftsView {
   private pickupForkliftPalettes(forklift3d: THREE.Object3D, palettesData: PaletteStatus[]) {
     let zPalette = 0.05;
     palettesData.forEach((el) => {
-      const { artikel, menge, leAufnahmeSeite, leGegenSeite, leHoehe, loadingType: loadingTypeSrc, leDefekt, leUnkonform, leGesperrt, leQs } = el;
+      const {
+        artikel,
+        menge,
+        leAufnahmeSeite,
+        leGegenSeite,
+        leHoehe,
+        loadingType: loadingTypeSrc,
+        leDefekt,
+        leUnkonform,
+        leGesperrt,
+        leQs,
+      } = el;
       //pickup data model
       // const epcNr = el.epc_nr ?? el.epcNr;
       const epcNr = el.epcNr;
       const wp: WarehousePalettePartial = {
-
         xkoord: 1.7,
         ykoord: 0,
         winkel: 0,
@@ -212,13 +229,13 @@ export default class ForkliftsView {
 
         epcNr,
         artikel,
-      
+
         menge,
         leAufnahmeSeite,
         leGegenSeite,
         leHoehe,
 
-        // TODO: 
+        // TODO:
         loadingType: parseInt(loadingTypeSrc),
 
         leDefekt,
@@ -270,7 +287,7 @@ export default class ForkliftsView {
     // todo: review it
 
     for (const el of palettesData) {
-      const epcNr =  (el as PaletteStatusMqttDrop).epc_nr ?? (el as PaletteStatusMqttDropUnused).epcNr;
+      const epcNr = (el as PaletteStatusMqttDrop).epc_nr ?? (el as PaletteStatusMqttDropUnused).epcNr;
       const ablageHoehe = (el as PaletteStatusMqttDrop).le_ablage_hoehe ?? (el as PaletteStatusMqttDropUnused).ablageHoehe;
       const leHoehe = (el as PaletteStatusMqttDrop).le_hoehe ?? (el as PaletteStatusMqttDropUnused).leHoehe;
 
@@ -314,7 +331,7 @@ export default class ForkliftsView {
   updateStatus(data: ForkliftStatus | undefined) {
     if (!data) {
       return;
-    }    
+    }
     /*
     const sampleData = [
       {

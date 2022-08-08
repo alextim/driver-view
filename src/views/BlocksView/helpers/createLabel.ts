@@ -11,7 +11,7 @@ export function createLabel(
   shift: number,
   size: number,
   material: THREE.MeshBasicMaterial | THREE.LineBasicMaterial,
-  font: Font
+  font: Font,
 ) {
   const dangle = angle * (Math.PI / 180);
 
