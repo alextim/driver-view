@@ -27,6 +27,7 @@ class EventEmitter implements IEventEmitter {
 
     // Each name
     names.forEach((_name) => {
+      console.log('on:', _name)
       // Resolve name
       const name = that.resolveName(_name);
 

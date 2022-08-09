@@ -157,9 +157,22 @@ export default class Application {
     this.dataService.getWarehouseSize();
     this.dataService.getWarehouse();
     this.dataService.getColorsSettings();
+/*
+    this.resources.startLoading();
+
+
+    this.dataService.getWarehouse();
+    this.dataService.getColorsSettings();
+    setTimeout(() => this.dataService.getWarehouseSize(), 500)
+*/
   }
 
   private LOAD_TCPCOM_DATA() {
     loadData();
+  }
+
+  // called in `process_redbox_map`
+  public UPDATE() {
+    this.appView.update();
   }
 }

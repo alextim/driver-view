@@ -19,7 +19,7 @@ async function process_redbox_map(data: any) {
     frk.position.set(x, y, 0);
     frk.rotation.z = rad;
 
-    app.update();
+    app.UPDATE();
   }
 
   await sleep(TCPCOM_SLEEP);
