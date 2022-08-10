@@ -3,15 +3,26 @@ import * as THREE from 'three';
 import { PLT_3D_ } from '../../constants';
 import { stringToHex } from '../../utils/stringToHex';
 
-import palettesMaterials from './palettesMaterials';
-
 import type { WarehousePalette, WarehousePalettePartial, WarehouseClientColors } from '../../types';
 
 export default class Palettes {
   container: THREE.Object3D;
+  
   clientsColors: WarehouseClientColors = {};
+
   private palettesGeometries: Record<string, THREE.BoxGeometry> = {};
   private palettesEdgeGeometries: Record<string, THREE.EdgesGeometry<THREE.BoxGeometry>> = {};
+
+  private palettesMaterials: Record<string, THREE.MeshBasicMaterial> = {
+    plum: new THREE.MeshBasicMaterial({ color: 0xff00ff }),
+    orange: new THREE.MeshBasicMaterial({ color: 0x00ffff }),
+    aquamarine: new THREE.MeshBasicMaterial({ color: 0x0000ff }),
+    frame: new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
+    active: new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true }),
+    selected: new THREE.MeshBasicMaterial({ color: 0xffff00 }),
+    defective: new THREE.MeshBasicMaterial({ color: 0xffd0d3 }),
+    stringer: new THREE.MeshBasicMaterial({ color: 0xa0522d }),
+  };
 
   constructor() {
     this.container = new THREE.Object3D();
@@ -51,17 +62,17 @@ export default class Palettes {
     // const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xc4eaff }));
     // scene.add(line);
 
-    const geometry = this.getGeometriesBySize(dx, dy, dz);
+    const geometry = this.getGeometryBySize(dx, dy, dz);
     //geometry.translate(0, 0.5, 0); //shift 0 point to bottom
-    const material = this.getMaterialsForPalette(paletteData);
+    const material = this.getMaterialForPalette(paletteData);
 
     const group = new THREE.Object3D();
     group.name = namePrefix + paletteData.epcNr;
     group.matrixAutoUpdate = false;
     group.add(new THREE.Mesh(geometry, material));
 
-    const edgeGeometry = this.getEdgeGeometriesBySize(dx, dy, dz);
-    group.add(new THREE.LineSegments(edgeGeometry, palettesMaterials.orange));
+    const edgeGeometry = this.getEdgeGeometryBySize(dx, dy, dz);
+    group.add(new THREE.LineSegments(edgeGeometry, this.palettesMaterials.orange));
 
     group.position.set(paletteData.xkoord, paletteData.ykoord, paletteData.ablageHoehe + paletteData.leHoehe / 2);
     if (paletteData.winkel % 180 !== 0) {
@@ -71,20 +82,20 @@ export default class Palettes {
     return group;
   }
 
-  private getMaterialsForPalette({ artikel, leDefekt, leUnkonform, leGesperrt, leQs }: WarehousePalettePartial) {
+  private getMaterialForPalette({ artikel, leDefekt, leUnkonform, leGesperrt, leQs }: WarehousePalettePartial) {
     /*
                     if ( data["sd.leDefekt"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
-  
+
                   if ( data["sd.leUnkonform"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
-  
+
                   if ( data["sd.leGesperrt"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
-  
+
                   if ( data["sd.leQs"] == 0 ) {
                       $('td', row).css('background-color', '#FFD0D3' );
                   }
@@ -94,12 +105,12 @@ export default class Palettes {
 
     // isDefect
     if (leDefekt === 0 || leUnkonform === 0 || leGesperrt === 0 || leQs === 0) {
-      return palettesMaterials.defective;
+      return this.palettesMaterials.defective;
     }
 
     //const selector = getSelectorFromName(palette.additionalChar4);
-    const selector = this.getSelectorFromName(artikel) as keyof typeof palettesMaterials;
-    if (!palettesMaterials[selector]) {
+    const selector = this.getSelectorFromName(artikel);
+    if (!this.palettesMaterials[selector]) {
       let color = '#FFFFFF';
       if (this.clientsColors[selector]) {
         color = this.clientsColors[selector];
@@ -109,21 +120,21 @@ export default class Palettes {
       }
 
       const mat = new THREE.MeshBasicMaterial({ color });
-      palettesMaterials[selector] = mat;
+      this.palettesMaterials[selector] = mat;
     }
 
     // console.log(clientsColors);
-    return palettesMaterials[selector];
+    return this.palettesMaterials[selector];
 
     //not used now
     /*
     if (artikel.indexOf('-') > -1) {
-      return palettesMaterials.plum;
+      return paletteMaterials.plum;
     }
     if (artikel.indexOf('.') > -1) {
-      return palettesMaterials.orange;
+      return paletteMaterials.orange;
     }
-    return palettesMaterials.aquamarine;
+    return paletteMaterials.aquamarine;
     */
   }
 
@@ -148,10 +159,10 @@ export default class Palettes {
   }
 
   private formatKey(x: number, y: number, z: number) {
-    return 'box_' + x + '_' + y + '_' + z;
+    return `box_${x}_${y}_${z}`;
   }
 
-  private getGeometriesBySize(x: number, y: number, z: number) {
+  private getGeometryBySize(x: number, y: number, z: number) {
     const key = this.formatKey(x, y, z);
 
     if (!this.palettesGeometries[key]) {
@@ -161,11 +172,11 @@ export default class Palettes {
     return this.palettesGeometries[key];
   }
 
-  private getEdgeGeometriesBySize(x: number, y: number, z: number) {
+  private getEdgeGeometryBySize(x: number, y: number, z: number) {
     const key = this.formatKey(x, y, z);
 
     if (!this.palettesEdgeGeometries[key]) {
-      this.palettesEdgeGeometries[key] = new THREE.EdgesGeometry(this.getGeometriesBySize(x, y, z));
+      this.palettesEdgeGeometries[key] = new THREE.EdgesGeometry(this.getGeometryBySize(x, y, z));
     }
 
     return this.palettesEdgeGeometries[key];
